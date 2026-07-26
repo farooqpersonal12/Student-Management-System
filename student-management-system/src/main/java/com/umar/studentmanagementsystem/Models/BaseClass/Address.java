@@ -14,19 +14,13 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class Address {
 
-    @NotBlank(message = "pincode is required")
-    @Pattern(
-            regexp = "^[0-9]{6}$",
-            message = "pincode must contain exactly 6 digits"
-    )
-    @Column(name = "pincode")
+
+
     private String pincode;
 
-    @NotBlank(message = "State is required")
-    @Column(name = "state")
+
     private String state;
 
-    @NotBlank(message = "District is required")
-    @Column(name = "district")
+
     private String district;
 }

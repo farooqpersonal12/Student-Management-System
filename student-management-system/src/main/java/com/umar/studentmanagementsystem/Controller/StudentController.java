@@ -5,9 +5,10 @@ import com.umar.studentmanagementsystem.DTOS.StudentResponseDTO;
 import com.umar.studentmanagementsystem.DTOS.StudentUpdateDTO;
 import com.umar.studentmanagementsystem.Service.StudentService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/students")
@@ -19,25 +20,57 @@ public class StudentController {
         this.studentService = studentService;
     }
 
+    // Create Student
     @PostMapping
-    public StudentResponseDTO createStudent(
+    public ResponseEntity<StudentResponseDTO> createStudent(
             @RequestBody @Valid StudentRequestDTO requestDTO) {
 
-        return studentService.createStudent(requestDTO);
+        StudentResponseDTO response = studentService.createStudent(requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // Get Student by ID
     @GetMapping("/{id}")
-    public StudentResponseDTO getStudentById(@PathVariable Long id) {
+    public ResponseEntity<StudentResponseDTO> getStudentById(@PathVariable Long id) {
 
-        return studentService.getStudentById(id);
+        StudentResponseDTO response = studentService.getStudentById(id);
+        return ResponseEntity.ok(response);
     }
 
+    // Get All Students with Pagination & Sorting
     @GetMapping
-    public List<StudentResponseDTO> getAllStudents() {
+    public Page<StudentResponseDTO> getAllStudents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
 
-        return studentService.getAllStudents();
+        return studentService.getAllStudents(page, size, sortBy, direction);
     }
 
+    // Search Students using Specifications
+    @GetMapping("/search")
+    public Page<StudentResponseDTO> searchStudent(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) Integer semester) {
+
+        return studentService.searchStudent(
+                page,
+                size,
+                email,
+                firstName,
+                phoneNumber,
+                department,
+                semester
+        );
+    }
+
+    // Update Student
     @PutMapping("/{id}")
     public StudentResponseDTO updateStudent(
             @PathVariable Long id,
@@ -46,9 +79,11 @@ public class StudentController {
         return studentService.updateStudent(id, updateDTO);
     }
 
+    // Delete Student
     @DeleteMapping("/{id}")
-    public void deleteStudent(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
 
         studentService.deleteStudent(id);
+        return ResponseEntity.noContent().build();
     }
 }
