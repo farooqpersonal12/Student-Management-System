@@ -1,4 +1,4 @@
-package com.umar.studentmanagementsystem;
+package com.umar.studentmanagementsystem.Config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
